@@ -92,33 +92,28 @@ namespace WarehouseApi.Controllers
 
 
 
-       [HttpDelete("{id}")]
-public async Task<IActionResult> DeleteProduct(int id)
-{
-    // ค้นหาผลิตภัณฑ์ที่ต้องการลบ
-    var product = await _context.Products.FindAsync(id);
-    if (product == null)
-    {
-        return NotFound(); // ถ้าหาสินค้าไม่เจอ
-    }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-    try
-    {
-        // ลบข้อมูลในตาราง Products
-        _context.Products.Remove(product);
+            try
+            {
+                _context.Products.Remove(product);
 
-        // บันทึกการลบสินค้า
-        await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-        // ส่งข้อมูลการลบกลับ
-        return Ok(new { message = "Product deleted successfully", product });
-    }
-    catch (Exception ex)
-    {
-        // กรณีเกิดข้อผิดพลาดในการลบข้อมูล
-        return StatusCode(500, new { message = "An error occurred while deleting the product.", error = ex.Message });
-    }
-}
+                return Ok(new { message = "Product deleted successfully", product });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the product.", error = ex.Message });
+            }
+        }
 
 
 
@@ -126,8 +121,8 @@ public async Task<IActionResult> DeleteProduct(int id)
         [HttpGet("logs")]
         public async Task<IActionResult> GetProductLogs()
         {
-            var logs = await _context.ProductLogs.ToListAsync(); // ดึงข้อมูลทั้งหมดจาก ProductLogs
-            return Ok(logs); // ส่งกลับข้อมูล log ทั้งหมด
+            var logs = await _context.ProductLogs.ToListAsync();
+            return Ok(logs);
         }
 
 

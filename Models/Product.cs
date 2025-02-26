@@ -2,7 +2,6 @@ public class Product
 {
     public int Id { get; set; }
 
-    // เพิ่ม required modifier
     public string? Name { get; set; }
 
     public int Quantity { get; set; }
