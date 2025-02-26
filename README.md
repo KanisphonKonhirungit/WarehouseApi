@@ -25,8 +25,8 @@ Warehouse API เป็นระบบสำหรับจัดการสิ
 ### ขั้นตอนที่ 1: Clone โปรเจค
 
 ```bash
-git clone git@github.com:KanisphonKonhirungit/WarehouseApi.git
-cd WarehouseApi
+git clone https://github.com/KanisphonKonhirungit/warehouse-api.git
+cd warehouse-api
 ```
 
 ### ขั้นตอนที่ 2: ตั้งค่าฐานข้อมูล
