@@ -15,14 +15,12 @@ namespace WarehouseApi.Controllers
             _context = context;
         }
 
-        // 1. GET: api/products - แสดงสินค้าทั้งหมด
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await _context.Products.ToListAsync();
         }
 
-        // 2. GET: api/products/5 - แสดงสินค้าตาม ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -36,45 +34,102 @@ namespace WarehouseApi.Controllers
             return product;
         }
 
-        // 3. POST: api/products - รับสินค้าเข้าคลัง (เพิ่มสินค้า)
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
+            var log = new ProductLog
+            {
+                ProductId = product.Id,
+                Action = "ADD",
+                NewValue = $"Name: {product.Name}, Quantity: {product.Quantity}, Price: {product.Price}"
+            };
+
+            _context.ProductLogs.Add(log);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 
-        // 4. PUT: api/products/5 - เบิกสินค้าออกจากคลัง (ลดจำนวนสินค้า)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != product.Id)
+            var existingProduct = await _context.Products.FindAsync(id);
+            if (existingProduct == null) return NotFound();
+
+            var oldValue = $"Name: {existingProduct.Name}, Quantity: {existingProduct.Quantity}, Price: {existingProduct.Price}";
+
+            existingProduct.Name = product.Name;
+            existingProduct.Price = product.Price;
+            existingProduct.Quantity = product.Quantity;
+
+            _context.Entry(existingProduct).State = EntityState.Modified;
+
+            try
             {
-                return BadRequest();
+                await _context.SaveChangesAsync();
+
+                var log = new ProductLog
+                {
+                    ProductId = id,
+                    Action = "UPDATE",
+                    OldValue = oldValue,
+                    NewValue = $"Name: {product.Name}, Quantity: {product.Quantity}, Price: {product.Price}"
+                };
+                _context.ProductLogs.Add(log);
+                await _context.SaveChangesAsync();
+
+                return Ok(existingProduct);
             }
-
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
         }
 
-        // 5. DELETE: api/products/5 - ลบสินค้า
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+
+
+
+       [HttpDelete("{id}")]
+public async Task<IActionResult> DeleteProduct(int id)
+{
+    // ค้นหาผลิตภัณฑ์ที่ต้องการลบ
+    var product = await _context.Products.FindAsync(id);
+    if (product == null)
+    {
+        return NotFound(); // ถ้าหาสินค้าไม่เจอ
+    }
+
+    try
+    {
+        // ลบข้อมูลในตาราง Products
+        _context.Products.Remove(product);
+
+        // บันทึกการลบสินค้า
+        await _context.SaveChangesAsync();
+
+        // ส่งข้อมูลการลบกลับ
+        return Ok(new { message = "Product deleted successfully", product });
+    }
+    catch (Exception ex)
+    {
+        // กรณีเกิดข้อผิดพลาดในการลบข้อมูล
+        return StatusCode(500, new { message = "An error occurred while deleting the product.", error = ex.Message });
+    }
+}
+
+
+
+
+        [HttpGet("logs")]
+        public async Task<IActionResult> GetProductLogs()
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var logs = await _context.ProductLogs.ToListAsync(); // ดึงข้อมูลทั้งหมดจาก ProductLogs
+            return Ok(logs); // ส่งกลับข้อมูล log ทั้งหมด
         }
+
+
     }
 }

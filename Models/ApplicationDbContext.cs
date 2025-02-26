@@ -8,6 +8,7 @@ namespace WarehouseApi.Models
             : base(options)
         { }
 
-        public DbSet<Product> Products { get; set; }  // กำหนด DbSet สำหรับ Product
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductLog> ProductLogs { get; set; }
     }
 }

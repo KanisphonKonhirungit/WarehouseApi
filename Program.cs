@@ -3,18 +3,14 @@ using WarehouseApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// กำหนด Connection String จากไฟล์ appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// เพิ่มบริการ DbContext ที่จะใช้ในการติดต่อกับ MSSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// เพิ่มบริการที่จำเป็นสำหรับ Web API
 builder.Services.AddControllers();
 
-// เพิ่มการตั้งค่า Swagger UI สำหรับ API Documentation
-builder.Services.AddSwaggerGen();  // เพิ่มการตั้งค่านี้
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -27,7 +23,6 @@ builder.Services.AddCors(options =>
 });
 
 
-// สร้างแอปพลิเคชัน
 var app = builder.Build();
 
 
