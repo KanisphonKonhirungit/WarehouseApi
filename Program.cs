@@ -16,8 +16,23 @@ builder.Services.AddControllers();
 // เพิ่มการตั้งค่า Swagger UI สำหรับ API Documentation
 builder.Services.AddSwaggerGen();  // เพิ่มการตั้งค่านี้
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+
 // สร้างแอปพลิเคชัน
 var app = builder.Build();
+
+
+app.UseCors("AllowAllOrigins");
+
 
 // ใช้ Swagger UI ถ้าเป็นการพัฒนา
 if (app.Environment.IsDevelopment())
@@ -34,3 +49,4 @@ app.MapControllers();
 
 // สตาร์ทแอป
 app.Run();
+

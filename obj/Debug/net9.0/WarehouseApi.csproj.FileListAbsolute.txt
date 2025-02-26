@@ -155,3 +155,4 @@ C:\Users\admin\WarehouseApi\obj\Debug\net9.0\ref\WarehouseApi.dll
 C:\Users\admin\WarehouseApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\admin\WarehouseApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\admin\WarehouseApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\admin\WarehouseApi\obj\Debug\net9.0\WarehouseApi.sourcelink.json
